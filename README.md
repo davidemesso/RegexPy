@@ -1,2 +1,15 @@
 # RegexPy
 A didactic implementation of regex validation using FSM in python
+
+### HOW TO USE
+- Instantiate a [FSMNotDeterministic](./regexFSM.py) object, passing all the parameters describing the regex and use it to obtain a [FSMDeterministic](./regexFSM.py) using the [subsetConstruction](./regexFSM.py)() method.
+- Use [checkRegex](./regexFSM.py)() method of the obtained object for string validation.
+
+NOTE: you could instantiate directly a FSMDeterministic object in simple cases, but this is temporary
+
+## WIP
+The objective is to achieve the instantiation of a regex object just parsing a string describing it, without having to project the FSM itself.
+
+This is computable via an algorithm that turns the regex into a not deterministic fsm, then using the subset construction to obtain a deterministic fsm, which is also simulable for string validation.
+
+See https://deniskyashif.com/2019/02/17/implementing-a-regular-expression-engine/
