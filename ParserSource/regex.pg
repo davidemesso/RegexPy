@@ -1,0 +1,11 @@
+concatpr : unio concatpr
+concatpr : EPS
+unio : closure unionpr
+unionpr : '|' closure unionpr
+unionpr : EPS
+closure : par closurepr
+closurepr : '*' closurepr
+closurepr : EPS
+par : '(' concat ')' 
+par : 'number'
+concat : unio concatpr

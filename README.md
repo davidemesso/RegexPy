@@ -1,9 +1,15 @@
 # RegexPy
 A didactic implementation of regex validation using FSM in python
 
+##Content
+- [regexFSM.py](./regexFSM.py) The core file, handling FSM creation and simulation, actually executing the regex matching
+- [Parser](./Parser/) The parser implementation which is used to obtain a polish notation stack based representation of the regex
+- [ParserSource](./ParserSource/) Tools and sources used to easly generate ad hoc parser. Special thanks: Professor [Mauro Leoncini](https://github.com/leoncini)
+
 ### HOW TO USE
 - Instantiate a [FSMNotDeterministic](./regexFSM.py) object, passing all the parameters describing the regex and use it to obtain a [FSMDeterministic](./regexFSM.py) using the [subsetConstruction](./regexFSM.py)() method.
 - Use [checkRegex](./regexFSM.py)() method of the obtained object for string validation.
+- Use [test.sh](./test.sh) with a regex as parameter for testing on parser
 
 NOTE: you could instantiate directly a FSMDeterministic object in simple cases, but this is temporary
 
