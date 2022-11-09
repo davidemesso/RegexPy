@@ -13,6 +13,8 @@ using namespace std;
 extern std::map<int,Token*> symbtbl;
 extern int symbtblptr;
 
+int parsedIdx = 1;
+
 bool isterm(int v) {
     return v<BASE_VARIABLES;
 }
@@ -24,7 +26,7 @@ bool iseps(int v) {
 FlexLexer* lexer;
 int currenttok;
 
-bool nt_N(int N, bool debug) {
+bool nt_N(int N, string& s,bool debug) {
   std::map<int,int> production = parsing_table[N];
   int prodnum;
   prodnum = production[currenttok];
@@ -41,9 +43,10 @@ bool nt_N(int N, bool debug) {
       break;
     }
     if (isterm(*t) and currenttok==*t) {
+      if(*t == '(')
+        s.append("(");
       currenttok = lexer->yylex();
-      cout << *t << endl;
-    } else if (not isterm(*t) && nt_N(*t,debug)) {
+    } else if (not isterm(*t) && nt_N(*t, s,debug)) {
       if (debug) {
 	      cout << "Resuming production:" << N << "," << prodnum << endl;
       }
@@ -54,7 +57,14 @@ bool nt_N(int N, bool debug) {
       return false;
     }
   }
-  std::cout << display[prodnum] << endl;
+  if(prodnum == 1)
+  {
+    std::string c(1, symbtbl[parsedIdx++]->ch);
+    s.append(c);
+  }
+  else if(operation.count(prodnum))
+    s.append(operation[prodnum]);
+  //std::cout << display[prodnum] << endl;
   return true;
 }
 
@@ -66,15 +76,14 @@ int main(int argc, char *argv[])
       debug = true;
     }
   }
+  string s = "";
   // Start parsing
-  std::cout << "Starting...\n";;
+  //std::cout << "Starting...\n";;
   lexer = new yyFlexLexer;
   currenttok = lexer->yylex();
   set_parsing_table();
-  if (nt_N(AXIOM,debug) and currenttok == tok_eof) std::cout << "Accept\n";
-  else  std::cout << "Reject\n";
+  if (nt_N(AXIOM,s,debug) and currenttok == tok_eof) cout << s << endl;
+  //else  std::cout << "Reject\n";
 
   return 0;
 }
-
-
