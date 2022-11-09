@@ -1,2 +1,3 @@
 #!/bin/bash
-echo "$1" | ./Parser/pparser
+x=$(echo "$1" | ./Parser/pparser)
+python3 regexFSM.py $x
