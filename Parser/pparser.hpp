@@ -19,7 +19,7 @@ std::vector<int> prod6{260,261};	// closure : par closurepr
 std::vector<int> prod7{42,261};	// closurepr : '*' closurepr
 std::vector<int> prod8{0};	// closurepr : EPS
 std::vector<int> prod9{40,262,41};	// par : '(' concat ')' 
-std::vector<int> prod10{-2};	// par : 'number'
+std::vector<int> prod10{-2};	// par : 'char'
 std::vector<int> prod11{256,257};	// concat : unio concatpr
 std::map<int,std::vector<int>> prods = {
 	{1,{prod1}},
@@ -55,6 +55,6 @@ std::map<int,std::string> display = {
 	{7,"closurepr : '*' closurepr"},
 	{8,"closurepr : EPS"},
 	{9,"par : '(' concat ')'"},
-	{10,"par : 'number'"},
+	{10,"par : 'char'"},
 	{11,"concat : unio concatpr"}
 };

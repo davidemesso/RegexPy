@@ -7,5 +7,5 @@ closure : par closurepr
 closurepr : '*' closurepr
 closurepr : EPS
 par : '(' concat ')' 
-par : 'number'
+par : 'char'
 concat : unio concatpr
