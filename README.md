@@ -1,7 +1,7 @@
 # RegexPy
 A didactic implementation of regex validation using FSM in python
 
-##Content
+## Content
 - [regexFSM.py](./regexFSM.py) The core file, handling FSM creation and simulation, actually executing the regex matching.
 - [Parser](./Parser/) The parser implementation which is used to obtain a polish notation stack based representation of the regex used for FSM generation, this folder only contains files used for execution.
 - [ParserSource](./ParserSource/) Tools and sources used to easly generate ad hoc parser, can be used for recompile purpose. Special thanks: Professor [Mauro Leoncini](https://github.com/leoncini)
