@@ -96,12 +96,18 @@ class FSMUtils:
         )
         
     @staticmethod
-    def union(fsm):
+    def union(firstFsm, secondFsm):
         pass
     
     @staticmethod
-    def concat(fsm):
+    def concat(firstFsm, secondFsm):
         pass
+
+    @staticmethod
+    def fromRegex(regex):
+        #TO BE IMPLEMENTED
+        return FSMUtils.starClosure(FSMUtils.fromCharacter(regex[0])) # only testing
+    
     
 class FSMDeterministic:
     def __init__(self, fsm, initState, finalState, alphabeth, statesDict):
@@ -128,3 +134,15 @@ class FSMDeterministic:
             currentState = self._FSM_[(currentState, char)]
             
         return True if currentState in self._FINALSTATES_ else False
+
+class Regex:
+    def __init__(self, regex):
+        notDeterministicFSM = FSMUtils.fromRegex(regex)
+        self._REGEXFSM_ = self.notDeterministicFSM.subsetConstruction()
+    
+    def match(self, string):
+        return self._REGEXFSM_.checkRegex(string)
+    
+    @staticmethod
+    def match(string, regex):
+        return FSMUtils.fromRegex(regex).subsetConstruction().checkRegex(string)
