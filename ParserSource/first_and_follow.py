@@ -205,16 +205,16 @@ def main(grammar):
             follow(non_terminal,tokens['tok_eof'])
     
 def help():
-    print("Uso: python first_and_follow.py [OPZIONI] file_grammatica")
-    print("Opzioni:")
-    print("\t-p, stampa su stdout gli insiemi first e follow")
-    print("\t-o dumpfile, esporta tutti i dati della grammatica in un file pickle")
-    print("\t-h, stampa questo help e termina")
+    print("Usage: python first_and_follow.py [OPTIONS] grammar_file")
+    print("Options:")
+    print("\t-p, print on stdout firsts and follows")
+    print("\t-o dumpfile as a pickle")
+    print("\t-h, help")
     
 if __name__=='__main__':
     n = len(sys.argv)
     if n==1:
-        print("Errore: manca l'indicazione del file con la grammatica")
+        print("Error: Missing grammar file")
         sys.exit(1)
     grammarfile = sys.argv[-1]
     if grammarfile == "-h":

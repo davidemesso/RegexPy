@@ -31,7 +31,7 @@ bool nt_N(int N, string& s,bool debug) {
   int prodnum;
   prodnum = production[currenttok];
   if(prodnum == 0) {
-    std::cerr << "ERRORE: nessuna produzione specificata per la coppia (" << N << "," << currenttok << ")\n";
+    std::cerr << "EROOR: No production for couple (" << N << "," << currenttok << ")\n";
     std::terminate();
   }
   std::vector<int> prod = prods[prodnum];
