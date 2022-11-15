@@ -22,9 +22,22 @@
 import sys
 from regexFSM import FSMDeterministic
 from regexFSM import FSMNotDeterministic
+from regexFSM import FSMUtils
 
 if len(sys.argv)!=2:
     print("Error: MISSING PARSED REGEX")
     sys.exit(1)
 
-print(sys.argv[1] + " parsed")
+polish_regex = sys.argv[1]
+FSM = FSMUtils.fromCharacter(polish_regex[0])
+ndFSM = FSM.subsetConstruction()
+
+print(ndFSM.checkRegex(polish_regex[0]))    # Expected True
+print(ndFSM.checkRegex("zzz"))              # Expected False
+
+FSM = FSMUtils.starClosure(FSM)
+ndFSM = FSM.subsetConstruction()
+
+print(ndFSM.checkRegex(polish_regex[0]*3))  # Expected True
+print(ndFSM.checkRegex(""))                 # Expected True
+print(ndFSM.checkRegex("zzz"))              # Expected False

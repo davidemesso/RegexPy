@@ -1,10 +1,11 @@
 class FSMNotDeterministic:
-    def __init__(self, fsm, initState, finalState, alphabeth, states):
+    def __init__(self, fsm, initState, finalState, alphabeth, states, lastState = None):
         self._FSM_ = fsm
         self._INITIALSTATE_ = initState
         self._FINALSTATES_ = finalState
         self._ALPHABETH_ = alphabeth
         self._STATES_ = states
+        self._LASTSTATE_ = lastState # only used in fromRegex construction
         
     def __str__(self):
         tostr = "\n{\n"
@@ -60,8 +61,47 @@ class FSMNotDeterministic:
             if any(item in state for item in self._FINALSTATES_):
                 finalStates.append(idx)
                 
-        return FSMDeterministic(fsmd, self._INITIALSTATE_, finalStates, self._ALPHABETH_, statesId)
+        return FSMDeterministic(fsmd, 0, finalStates, self._ALPHABETH_, statesId)
     
+class FSMUtils:
+    @staticmethod
+    def fromCharacter(char, firstIndex = 0):
+        return FSMNotDeterministic(
+            fsm = {
+                (firstIndex, char) : {firstIndex + 1},
+            }, 
+            initState = firstIndex, 
+            finalState = {firstIndex + 1}, 
+            alphabeth = {char}, 
+            states = {firstIndex, firstIndex + 1},
+            lastState = firstIndex + 1,
+        )
+
+    @staticmethod
+    def starClosure(fsm):
+        firstIndex = max(fsm._STATES_) + 1
+        
+        fsm._FSM_.update({
+            (firstIndex, "e") : {fsm._INITIALSTATE_, firstIndex + 1},
+            (fsm._LASTSTATE_, "e") : {fsm._INITIALSTATE_, firstIndex + 1},
+        })
+        fsm._FINALSTATES_.add(firstIndex + 1)
+        return FSMNotDeterministic(
+            fsm = fsm._FSM_,
+            initState = firstIndex,
+            finalState = fsm._FINALSTATES_,
+            alphabeth = fsm._ALPHABETH_,
+            states = fsm._STATES_.update({firstIndex, firstIndex + 1}),
+            lastState = firstIndex + 1
+        )
+        
+    @staticmethod
+    def union(fsm):
+        pass
+    
+    @staticmethod
+    def concat(fsm):
+        pass
     
 class FSMDeterministic:
     def __init__(self, fsm, initState, finalState, alphabeth, statesDict):
@@ -75,6 +115,7 @@ class FSMDeterministic:
     def __str__(self):
         print(self._STATESDICT_)
         print(self._FINALSTATES_)
+        print(self._INITIALSTATE_)
         tostr = "\n{\n"
         tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
         return tostr + "\n}\n"
