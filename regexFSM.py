@@ -8,6 +8,8 @@ class FSMNotDeterministic:
         self._LASTSTATE_ = lastState # only used in fromRegex construction
         
     def __str__(self):
+        print(self._FINALSTATES_)
+        print(self._STATES_)
         tostr = "\n{\n"
         tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
         return tostr + "\n}\n"
@@ -97,16 +99,49 @@ class FSMUtils:
         
     @staticmethod
     def union(firstFsm, secondFsm):
-        pass
+        print(firstFsm)
+        print(secondFsm)
+        firstIndex = max(max(firstFsm._STATES_), max(secondFsm._STATES_)) + 1
+        
+        secondFsm._FSM_.update({
+            (firstIndex, "e") : {firstFsm._INITIALSTATE_, secondFsm._INITIALSTATE_},
+            (firstFsm._LASTSTATE_, "e") : {firstIndex + 1},
+            (secondFsm._LASTSTATE_, "e") : {firstIndex + 1},
+        })
+        secondFsm._FSM_.update(firstFsm._FSM_)
+        secondFsm._ALPHABETH_.update(firstFsm._ALPHABETH_)
+        secondFsm._STATES_.update(firstFsm._STATES_),
+        secondFsm._STATES_.update({firstIndex, firstIndex + 1}),
+        return FSMNotDeterministic(
+            fsm = secondFsm._FSM_,
+            initState = firstIndex,
+            finalState = {firstIndex + 1},
+            alphabeth = secondFsm._ALPHABETH_,
+            states = secondFsm._STATES_,
+            lastState = {firstIndex + 1}
+        )
     
     @staticmethod
     def concat(firstFsm, secondFsm):
-        pass
+        secondFsm._FSM_.update({
+            (secondFsm._LASTSTATE_, "e") : {firstFsm._INITIALSTATE_},
+        })
+        secondFsm._FSM_.update(firstFsm._FSM_)
+        secondFsm._ALPHABETH_.update(firstFsm._ALPHABETH_)
+        secondFsm._STATES_.update(firstFsm._STATES_),
+        return FSMNotDeterministic(
+            fsm = secondFsm._FSM_,
+            initState = secondFsm._INITIALSTATE_,
+            finalState = firstFsm._FINALSTATES_,
+            alphabeth = secondFsm._ALPHABETH_,
+            states = secondFsm._STATES_,
+            lastState = firstFsm._LASTSTATE_
+        )
 
     @staticmethod
     def fromRegex(regex):
         #TO BE IMPLEMENTED
-        return FSMUtils.starClosure(FSMUtils.fromCharacter(regex[0])) # only testing
+        return FSMUtils.concat(FSMUtils.fromCharacter(regex[0]),FSMUtils.fromCharacter(regex[1])) # only testing
     
     
 class FSMDeterministic:
@@ -119,9 +154,6 @@ class FSMDeterministic:
         self._STATES_ = statesDict.values()
         
     def __str__(self):
-        print(self._STATESDICT_)
-        print(self._FINALSTATES_)
-        print(self._INITIALSTATE_)
         tostr = "\n{\n"
         tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
         return tostr + "\n}\n"
