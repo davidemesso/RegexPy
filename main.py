@@ -4,18 +4,17 @@ from regexFSM import FSMNotDeterministic
 from regexFSM import FSMUtils
 from regexFSM import Regex
 
-if len(sys.argv) not in (1,3):
+if len(sys.argv) != 3:
     print("Error: WRONG PARAMS COUNT")
     sys.exit(1)
 
-regex = sys.argv[1].strip()
+regex = sys.argv[2].strip()
 string = ""
 try:
-    string = sys.argv[2]
+    string = sys.argv[1]
 except:
     pass
 
-print(Regex.match("abcdfffff", "((a|b)*c*)(d|f)*"))
-print(Regex.match("abcdfffff", "((a|b)*c*)(d|f)*"))
+#print(Regex.match("abcdfffff", "((a|b)*c*)(d|f)*"))
 print(Regex.match(string, regex))
 

@@ -66,7 +66,51 @@ class FSMNotDeterministic:
             if any(item in state for item in self._FINALSTATES_):
                 finalStates.append(idx)
                 
-        return FSMDeterministic(fsmd, 0, finalStates, self._ALPHABETH_, statesId)
+        return FSMDeterministic(fsmd, 0, finalStates, self._ALPHABETH_, statesId)   
+
+                
+class FSMDeterministic:
+    def __init__(self, fsm, initState, finalState, alphabeth, statesDict):
+        self._FSM_ = fsm
+        self._INITIALSTATE_ = initState
+        self._FINALSTATES_ = finalState
+        self._ALPHABETH_ = alphabeth
+        self._STATESDICT_ = statesDict
+        self._STATES_ = statesDict.values()
+        
+    def __str__(self):
+        tostr = "\n{\n"
+        tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
+        return tostr + "\n}\n"
+    
+    def checkRegex(self, inputString):
+        currentState = self._INITIALSTATE_
+        for char in inputString:
+            if (currentState, char) not in self._FSM_: 
+                return False
+            currentState = self._FSM_[(currentState, char)]
+            
+        return True if currentState in self._FINALSTATES_ else False
+
+class Regex:
+    def __init__(self, regex):
+        notDeterministicFSM = FSMUtils.fromRegex(regex)
+        self._REGEXFSM_ = self.notDeterministicFSM.subsetConstruction()
+    
+    def match(self, string):
+        return self._REGEXFSM_.checkRegex(string)
+    
+    @staticmethod
+    def match(string, regex):
+        if not regex:
+            return False
+        
+        try:
+            return FSMUtils.fromRegex(regex).subsetConstruction().checkRegex(string)
+        except:
+            return False
+        
+        
     
 class FSMUtils:
     @staticmethod
@@ -142,10 +186,7 @@ class FSMUtils:
 
     @staticmethod
     def fromRegex(regex):
-        p1 = subprocess.Popen(["echo", regex], stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout,  stdout=subprocess.PIPE).communicate()[0]
-        regex = p2.decode().strip()
-        p1.stdout.close()
+        regex = FSMUtils.toPolishNotation(regex)
         stack = Stack()
         lastindex = 0
         for char in regex:
@@ -167,59 +208,19 @@ class FSMUtils:
             else:
                 stack.push(FSMUtils.fromCharacter(char, lastindex))
             lastindex += 2
-                
-            # print(str(stack) + " ITER " + str(lastindex))
             
         while stack.size() > 1:
-            #print(stack)
             firstFsm = stack.pop()
             secondFsm = stack.pop()
             fsm = FSMUtils.concat(firstFsm, secondFsm)
             stack.push(fsm)
         
-        #print(stack.peek())
         return stack.peek()
-
-                
-    
-    
-class FSMDeterministic:
-    def __init__(self, fsm, initState, finalState, alphabeth, statesDict):
-        self._FSM_ = fsm
-        self._INITIALSTATE_ = initState
-        self._FINALSTATES_ = finalState
-        self._ALPHABETH_ = alphabeth
-        self._STATESDICT_ = statesDict
-        self._STATES_ = statesDict.values()
-        
-    def __str__(self):
-        tostr = "\n{\n"
-        tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
-        return tostr + "\n}\n"
-    
-    def checkRegex(self, inputString):
-        currentState = self._INITIALSTATE_
-        for char in inputString:
-            if (currentState, char) not in self._FSM_: 
-                return False
-            currentState = self._FSM_[(currentState, char)]
-            
-        return True if currentState in self._FINALSTATES_ else False
-
-class Regex:
-    def __init__(self, regex):
-        notDeterministicFSM = FSMUtils.fromRegex(regex)
-        self._REGEXFSM_ = self.notDeterministicFSM.subsetConstruction()
-    
-    def match(self, string):
-        return self._REGEXFSM_.checkRegex(string)
     
     @staticmethod
-    def match(string, regex):
-        if not regex:
-            return False
-        
-        # try:
-        return FSMUtils.fromRegex(regex).subsetConstruction().checkRegex(string)
-        # except:
-        #     return False
+    def toPolishNotation(regex):
+        p1 = subprocess.Popen(["echo", regex], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout,  stdout=subprocess.PIPE).communicate()[0]
+        regex = p2.decode().strip()
+        p1.stdout.close()
+        return regex     
