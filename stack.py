@@ -1,6 +1,6 @@
 class Stack():
-    def __init__(self, list = []):
-        self._stack = list
+    def __init__(self):
+        self._stack = []
         
     def push(self, item):
         self._stack.append(item)
@@ -21,3 +21,8 @@ class Stack():
     def size(self):
         return len(self._stack)
 
+    def __str__(self):
+        toString = ""
+        for el in self._stack:
+            toString += f"{el} "
+        return toString

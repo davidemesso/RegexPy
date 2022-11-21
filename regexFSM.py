@@ -1,3 +1,6 @@
+from stack import Stack
+import subprocess
+
 class FSMNotDeterministic:
     def __init__(self, fsm, initState, finalState, alphabeth, states, lastState = None):
         self._FSM_ = fsm
@@ -88,19 +91,18 @@ class FSMUtils:
             (fsm._LASTSTATE_, "e") : {fsm._INITIALSTATE_, firstIndex + 1},
         })
         fsm._FINALSTATES_.add(firstIndex + 1)
+        fsm._STATES_.update({firstIndex, firstIndex + 1})
         return FSMNotDeterministic(
             fsm = fsm._FSM_,
             initState = firstIndex,
             finalState = fsm._FINALSTATES_,
             alphabeth = fsm._ALPHABETH_,
-            states = fsm._STATES_.update({firstIndex, firstIndex + 1}),
+            states = fsm._STATES_,
             lastState = firstIndex + 1
         )
         
     @staticmethod
     def union(firstFsm, secondFsm):
-        print(firstFsm)
-        print(secondFsm)
         firstIndex = max(max(firstFsm._STATES_), max(secondFsm._STATES_)) + 1
         
         secondFsm._FSM_.update({
@@ -118,7 +120,7 @@ class FSMUtils:
             finalState = {firstIndex + 1},
             alphabeth = secondFsm._ALPHABETH_,
             states = secondFsm._STATES_,
-            lastState = {firstIndex + 1}
+            lastState = firstIndex + 1
         )
     
     @staticmethod
@@ -140,8 +142,45 @@ class FSMUtils:
 
     @staticmethod
     def fromRegex(regex):
-        #TO BE IMPLEMENTED
-        return FSMUtils.concat(FSMUtils.fromCharacter(regex[0]),FSMUtils.fromCharacter(regex[1])) # only testing
+        p1 = subprocess.Popen(["echo", regex], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout,  stdout=subprocess.PIPE).communicate()[0]
+        regex = p2.decode().strip()
+        p1.stdout.close()
+        stack = Stack()
+        lastindex = 0
+        for char in regex:
+            if char == '|':
+                stack.push(FSMUtils.union(stack.pop(), stack.pop()))
+            elif char == '*':
+                stack.push(FSMUtils.starClosure(stack.pop()))
+            elif char == '(':
+                stack.push('(')
+            elif char == ')':
+                fsm = stack.pop()
+                try:
+                    while stack.peek() != '(':
+                        fsm = FSMUtils.concat(fsm, stack.pop())
+                except:
+                    pass
+                stack.pop()
+                stack.push(fsm)
+            else:
+                stack.push(FSMUtils.fromCharacter(char, lastindex))
+            lastindex += 2
+                
+            # print(str(stack) + " ITER " + str(lastindex))
+            
+        while stack.size() > 1:
+            #print(stack)
+            firstFsm = stack.pop()
+            secondFsm = stack.pop()
+            fsm = FSMUtils.concat(firstFsm, secondFsm)
+            stack.push(fsm)
+        
+        #print(stack.peek())
+        return stack.peek()
+
+                
     
     
 class FSMDeterministic:
@@ -177,4 +216,10 @@ class Regex:
     
     @staticmethod
     def match(string, regex):
+        if not regex:
+            return False
+        
+        # try:
         return FSMUtils.fromRegex(regex).subsetConstruction().checkRegex(string)
+        # except:
+        #     return False

@@ -1,3 +1,2 @@
 #!/bin/bash
-x=$(echo "$1" | ./Parser/pparser)
-python3 main.py $x
+python3 ./main.py "((a|b)*c*)(d|f)*" "abcdfffff"
