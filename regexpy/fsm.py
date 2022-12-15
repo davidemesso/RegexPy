@@ -1,5 +1,4 @@
 from regexpy.utils.stack import Stack
-from functools import lru_cache
 import subprocess
 
 class FSMNotDeterministic:

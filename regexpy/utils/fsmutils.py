@@ -1,4 +1,5 @@
 from regexpy.fsm import *
+from functools import lru_cache
 
 class FSMUtils:
     @staticmethod
