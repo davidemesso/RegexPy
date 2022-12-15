@@ -1,4 +1,5 @@
 from stack import Stack
+from functools import lru_cache
 import subprocess
 
 class FSMNotDeterministic:
@@ -166,6 +167,7 @@ class FSMUtils:
         )
 
     @staticmethod
+    @lru_cache(typed=False)
     def fromRegex(regex):
         regex = FSMUtils.toPolishNotation(regex)
         if regex is None:
