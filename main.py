@@ -2,7 +2,7 @@ import sys
 from regexFSM import FSMDeterministic
 from regexFSM import FSMNotDeterministic
 from regexFSM import FSMUtils
-from regexFSM import Regex
+from Regex import Regex
 
 if len(sys.argv) != 3:
     print("Error: WRONG PARAMS COUNT")

@@ -91,25 +91,6 @@ class FSMDeterministic:
             currentState = self._FSM_[(currentState, char)]
             
         return True if currentState in self._FINALSTATES_ else False
-
-class Regex:
-    def __init__(self, regex):
-        notDeterministicFSM = FSMUtils.fromRegex(regex)
-        self._REGEXFSM_ = self.notDeterministicFSM.subsetConstruction()
-    
-    def match(self, string):
-        return self._REGEXFSM_.checkRegex(string)
-    
-    @staticmethod
-    def match(string, regex):
-        if not regex:
-            return False
-        
-        try:
-            return FSMUtils.fromRegex(regex).subsetConstruction().checkRegex(string)
-        except:
-            return False
-        
         
     
 class FSMUtils:
@@ -187,6 +168,8 @@ class FSMUtils:
     @staticmethod
     def fromRegex(regex):
         regex = FSMUtils.toPolishNotation(regex)
+        if regex is None:
+            raise Exception()
         stack = Stack()
         lastindex = 0
         for char in regex:
@@ -219,8 +202,11 @@ class FSMUtils:
     
     @staticmethod
     def toPolishNotation(regex):
-        p1 = subprocess.Popen(["echo", regex], stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout,  stdout=subprocess.PIPE).communicate()[0]
+        try:
+            p1 = subprocess.Popen(["echo", regex], stdout=subprocess.PIPE, shell=False)
+            p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout, stdout=subprocess.PIPE, shell=False).communicate()[0]
+        except:
+            return None
         regex = p2.decode().strip()
         p1.stdout.close()
         return regex     
