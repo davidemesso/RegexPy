@@ -1,4 +1,4 @@
-from regexFSM import FSMUtils
+from regexpy.utils.fsmutils import *
 
 class Regex:
     def __init__(self, regex):
