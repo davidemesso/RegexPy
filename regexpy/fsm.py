@@ -20,8 +20,8 @@ class FSMNotDeterministic:
     def closure(self, state):
         visited = [state]
         closureStates = [state]
-        if (state, "e") in self._FSM_.keys():
-            closureStates += list(self._FSM_[(state, "e")])  # all reachable states with e-transitions
+        if (state, "eps") in self._FSM_.keys():
+            closureStates += list(self._FSM_[(state, "eps")])  # all reachable states with e-transitions
         for s in closureStates: 
             if s not in visited:    # prevents infinite cycles
                 visited.append(s)
