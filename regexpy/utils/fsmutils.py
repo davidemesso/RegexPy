@@ -90,11 +90,8 @@ class FSMUtils:
                 stack.push('(')
             elif char == ')':
                 fsm = stack.pop()
-                try:
-                    while stack.peek() != '(':
-                        fsm = FSMUtils.concat(fsm, stack.pop())
-                except:
-                    pass
+                while stack.peek() != '(':
+                    fsm = FSMUtils.concat(fsm, stack.pop())
                 stack.pop()
                 stack.push(fsm)
             else:
@@ -113,9 +110,14 @@ class FSMUtils:
     def toPolishNotation(regex):
         try:
             p1 = subprocess.Popen(["echo", regex], stdout=subprocess.PIPE, shell=False)
-            p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout, stdout=subprocess.PIPE, shell=False).communicate()[0]
+            p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout, stdout=subprocess.PIPE, shell=False)
         except:
+            p1.kill()
+            p2.kill()
             return None
-        regex = p2.decode().strip()
+        
+        regex = p2.communicate()[0].decode().strip()
         p1.stdout.close()
+        p1.kill()
+        p2.kill()
         return regex     
