@@ -108,16 +108,12 @@ class FSMUtils:
     
     @staticmethod
     def toPolishNotation(regex):
-        try:
-            p1 = subprocess.Popen(["echo", regex], stdout=subprocess.PIPE, shell=False)
-            p2 = subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout, stdout=subprocess.PIPE, shell=False)
-        except:
-            p1.kill()
-            p2.kill()
-            return None
+        with subprocess.Popen(["echo", regex], stdout=subprocess.PIPE, shell=False) as p1:
+            with subprocess.Popen(["./Parser/pparser"], stdin=p1.stdout, stdout=subprocess.PIPE, shell=False) as p2:
+                try:
+                    regex = p2.communicate()[0].decode().strip()
+                    p1.stdout.close()
+                except:
+                    return None
         
-        regex = p2.communicate()[0].decode().strip()
-        p1.stdout.close()
-        p1.kill()
-        p2.kill()
         return regex     
