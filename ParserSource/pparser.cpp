@@ -13,6 +13,12 @@ using namespace std;
 extern std::map<int,Token*> symbtbl;
 extern int symbtblptr;
 
+std::map<int,std::string> operation = {
+	{2,")"},
+	{4,"*"},
+	{7,"|"},
+};
+
 int parsedIdx = 1;
 
 bool isterm(int v) {

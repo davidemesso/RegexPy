@@ -20,7 +20,7 @@ int count = 0;
 
 %}
 
-char     [a-zA-Z]
+char     [a-zA-Z0-9]
 %option noyywrap
 
 %%
@@ -41,5 +41,5 @@ char     [a-zA-Z]
 %%
 
 void illegal(char c) {
-   throw std::invalid_argument( "Trovato un carattere illegale" );
+   std::cerr << "Trovato un carattere illegale" << std::endl;
 }
