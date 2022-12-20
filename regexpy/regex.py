@@ -9,13 +9,21 @@ class Regex:
     
     def __init__(self, regex):
         """Regex constructor"""
-        self._REGEXFSM_ = FSMUtils.fromRegex(regex).subsetConstruction()
+        self._regex = FSMUtils.fromRegex(regex).subsetConstruction()
+        
+    @property
+    def regex(self):
+        return self._regex
+    
+    @regex.setter
+    def regex(self, value):
+    	self._regex = FSMUtils.fromRegex(value).subsetConstruction()
     
     def validate(self, string):
         """Returns whether the matching is true or false
         Must be called on an instance of Regex, it's the not static variant of match()
         """
-        return self._REGEXFSM_.checkRegex(string)
+        return self._regex.checkRegex(string)
     
     @staticmethod
     def match(string, regex):

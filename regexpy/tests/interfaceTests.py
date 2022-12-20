@@ -10,6 +10,9 @@ class InterfaceTests(unittest.TestCase):
         regex = Regex("((a|b)*c*)(d|f)*c*")
         self.assertTrue(regex.validate("abcdfffff"))
         self.assertFalse(regex.validate("z"))
+        regex.regex = "a*"
+        self.assertTrue(regex.validate("aaa"))
+        self.assertFalse(regex.validate("z"))
         
     def test_2_matchAny(self):
         self.assertTrue(Regex.matchAny("aaa", ["a*", "b*"]))
