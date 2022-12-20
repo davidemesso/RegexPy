@@ -29,4 +29,14 @@ class Regex:
             return FSMUtils.fromRegex(regex).subsetConstruction().checkRegex(string)
         except:
             return False
+        
+    @staticmethod
+    def matchAny(string, regexList):
+        """Returns true if at least one regex matches"""
+        return any(map(lambda r : Regex.match(string, r), regexList))
+    
+    @staticmethod
+    def matchAll(string, regexList):
+        """Returns true if all regex matches"""
+        return all(map(lambda r : Regex.match(string, r), regexList))
 

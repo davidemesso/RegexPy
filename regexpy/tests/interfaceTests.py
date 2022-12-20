@@ -11,6 +11,14 @@ class InterfaceTests(unittest.TestCase):
         self.assertTrue(regex.validate("abcdfffff"))
         self.assertFalse(regex.validate("z"))
         
+    def test_2_matchAny(self):
+        self.assertTrue(Regex.matchAny("aaa", ["a*", "b*"]))
+        self.assertFalse(Regex.matchAny("aaa", ["b*", "c*"]))
+    
+    def test_2_matchAll(self):
+        self.assertTrue(Regex.matchAll("aaa", ["a*", "(a|b)*"]))
+        self.assertFalse(Regex.matchAll("aaa", ["a*", "b*"]))
+        
     @staticmethod
     def runTests():
         unittest.main()
