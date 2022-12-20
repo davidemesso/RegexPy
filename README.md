@@ -39,6 +39,13 @@ import Regex from [regex](./regexpy/regex.py) class and use either the instance 
 
 NOTE: you could instantiate directly a FSMDeterministic object in simple cases, but it recomended to 
 
+## New features
+[regex](./regexpy/regex.py) class now implements:
+- [matchAny](./regexpy/regex.py)() "One of" matching
+- [matchAll](./regexpy/regex.py)() "All of" matching
+Allowing for multiple regex to be evaluated at once.
+
+
 ## Conclusion
 The program achieved the instantiation of a regex object just parsing a string describing it, without having to project the FSM itself.
 
