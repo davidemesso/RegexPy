@@ -15,7 +15,7 @@ class FSMUtils:
             fsm = {
                 (firstIndex, char) : {firstIndex + 1},
             }, 
-            initState = firstIndex, 
+            initialState = firstIndex, 
             finalState = {firstIndex + 1}, 
             alphabeth = {char}, 
             states = {firstIndex, firstIndex + 1},
@@ -25,62 +25,62 @@ class FSMUtils:
     @staticmethod
     def starClosure(fsm):
         """Returns a not deterministic FSM representing a block that can repeated 0, 1 or more times"""
-        firstIndex = max(fsm._STATES_) + 1
+        firstIndex = max(fsm._states) + 1
         
-        fsm._FSM_.update({
-            (firstIndex, "eps") : {fsm._INITIALSTATE_, firstIndex + 1},
-            (fsm._LASTSTATE_, "eps") : {fsm._INITIALSTATE_, firstIndex + 1},
+        fsm._fsm.update({
+            (firstIndex, "eps") : {fsm._initialState, firstIndex + 1},
+            (fsm._lastState, "eps") : {fsm._initialState, firstIndex + 1},
         })
-        fsm._FINALSTATES_.add(firstIndex + 1)
-        fsm._STATES_.update({firstIndex, firstIndex + 1})
+        fsm._finalStates.add(firstIndex + 1)
+        fsm._states.update({firstIndex, firstIndex + 1})
         return FSMNotDeterministic(
-            fsm = fsm._FSM_,
-            initState = firstIndex,
-            finalState = fsm._FINALSTATES_,
-            alphabeth = fsm._ALPHABETH_,
-            states = fsm._STATES_,
+            fsm = fsm._fsm,
+            initialState = firstIndex,
+            finalState = fsm._finalStates,
+            alphabeth = fsm._alphabeth,
+            states = fsm._states,
             lastState = firstIndex + 1
         )
         
     @staticmethod
     def union(firstFsm, secondFsm):
         """Returns a not deterministic FSM representing the union of 2 blocks (OR operation)"""
-        firstIndex = max(max(firstFsm._STATES_), max(secondFsm._STATES_)) + 1
+        firstIndex = max(max(firstFsm._states), max(secondFsm._states)) + 1
         
-        secondFsm._FSM_.update({
-            (firstIndex, "eps") : {firstFsm._INITIALSTATE_, secondFsm._INITIALSTATE_},
-            (firstFsm._LASTSTATE_, "eps") : {firstIndex + 1},
-            (secondFsm._LASTSTATE_, "eps") : {firstIndex + 1},
+        secondFsm._fsm.update({
+            (firstIndex, "eps") : {firstFsm._initialState, secondFsm._initialState},
+            (firstFsm._lastState, "eps") : {firstIndex + 1},
+            (secondFsm._lastState, "eps") : {firstIndex + 1},
         })
-        secondFsm._FSM_.update(firstFsm._FSM_)
-        secondFsm._ALPHABETH_.update(firstFsm._ALPHABETH_)
-        secondFsm._STATES_.update(firstFsm._STATES_),
-        secondFsm._STATES_.update({firstIndex, firstIndex + 1}),
+        secondFsm._fsm.update(firstFsm._fsm)
+        secondFsm._alphabeth.update(firstFsm._alphabeth)
+        secondFsm._states.update(firstFsm._states),
+        secondFsm._states.update({firstIndex, firstIndex + 1}),
         return FSMNotDeterministic(
-            fsm = secondFsm._FSM_,
-            initState = firstIndex,
+            fsm = secondFsm._fsm,
+            initialState = firstIndex,
             finalState = {firstIndex + 1},
-            alphabeth = secondFsm._ALPHABETH_,
-            states = secondFsm._STATES_,
+            alphabeth = secondFsm._alphabeth,
+            states = secondFsm._states,
             lastState = firstIndex + 1
         )
     
     @staticmethod
     def concat(firstFsm, secondFsm):
         """Returns a not deterministic FSM representing the concatenation of 2 blocks"""
-        secondFsm._FSM_.update({
-            (secondFsm._LASTSTATE_, "eps") : {firstFsm._INITIALSTATE_},
+        secondFsm._fsm.update({
+            (secondFsm._lastState, "eps") : {firstFsm._initialState},
         })
-        secondFsm._FSM_.update(firstFsm._FSM_)
-        secondFsm._ALPHABETH_.update(firstFsm._ALPHABETH_)
-        secondFsm._STATES_.update(firstFsm._STATES_),
+        secondFsm._fsm.update(firstFsm._fsm)
+        secondFsm._alphabeth.update(firstFsm._alphabeth)
+        secondFsm._states.update(firstFsm._states),
         return FSMNotDeterministic(
-            fsm = secondFsm._FSM_,
-            initState = secondFsm._INITIALSTATE_,
-            finalState = firstFsm._FINALSTATES_,
-            alphabeth = secondFsm._ALPHABETH_,
-            states = secondFsm._STATES_,
-            lastState = firstFsm._LASTSTATE_
+            fsm = secondFsm._fsm,
+            initialState = secondFsm._initialState,
+            finalState = firstFsm._finalStates,
+            alphabeth = secondFsm._alphabeth,
+            states = secondFsm._states,
+            lastState = firstFsm._lastState
         )
 
     @staticmethod

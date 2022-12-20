@@ -3,28 +3,28 @@ import subprocess
 from abc import ABC
 
 class AbstractFSM(ABC):
-    def __init__(self, fsm, initState, finalState, alphabeth, states):
-        self._FSM_ = fsm
-        self._INITIALSTATE_ = initState
-        self._FINALSTATES_ = finalState
-        self._ALPHABETH_ = alphabeth
-        self._STATES_ = states
+    def __init__(self, fsm, initialState, finalState, alphabeth, states):
+        self._fsm = fsm
+        self._initialState = initialState
+        self._finalStates = finalState
+        self._alphabeth = alphabeth
+        self._states = states
         
     def __str__(self):
         tostr = "\n{\n"
-        tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
+        tostr += "\n".join([f"\t{k}: {v}," for k, v in self._fsm.items()])
         return tostr + "\n}\n"
 
 class FSMNotDeterministic(AbstractFSM):
-    def __init__(self, fsm, initState, finalState, alphabeth, states, lastState = None):
-        AbstractFSM.__init__(self, fsm, initState, finalState, alphabeth, states)
-        self._LASTSTATE_ = lastState # only used in fromRegex construction
+    def __init__(self, fsm, initialState, finalState, alphabeth, states, lastState = None):
+        AbstractFSM.__init__(self, fsm, initialState, finalState, alphabeth, states)
+        self._lastState = lastState # only used in fromRegex construction
 
     def closure(self, state):
         visited = [state]
         closureStates = [state]
-        if (state, "eps") in self._FSM_.keys():
-            closureStates += list(self._FSM_[(state, "eps")])  # all reachable states with e-transitions
+        if (state, "eps") in self._fsm.keys():
+            closureStates += list(self._fsm[(state, "eps")])  # all reachable states with e-transitions
         for s in closureStates: 
             if s not in visited:    # prevents infinite cycles
                 visited.append(s)
@@ -37,7 +37,7 @@ class FSMNotDeterministic(AbstractFSM):
         statesId = {}
         lastStateId = 0
         
-        q0 = self.closure(self._INITIALSTATE_)
+        q0 = self.closure(self._initialState)
         statesId[q0] = lastStateId
         
         unmarkedStates = [q0]
@@ -48,11 +48,11 @@ class FSMNotDeterministic(AbstractFSM):
         while unmarkedStates:
             q = unmarkedStates.pop()
             for s in q:
-                for c in self._ALPHABETH_:
+                for c in self._alphabeth:
                     t = ()
                     newState = ()
-                    if (s, c) in self._FSM_.keys():
-                        t = self._FSM_[(s, c)]
+                    if (s, c) in self._fsm.keys():
+                        t = self._fsm[(s, c)]
                     for el in t:
                         newState += self.closure(el)
                     if newState:
@@ -66,22 +66,22 @@ class FSMNotDeterministic(AbstractFSM):
         # Every new state containing an original final state is a new final state
         finalStates = []
         for (state, idx) in statesId.items():
-            if any(item in state for item in self._FINALSTATES_):
+            if any(item in state for item in self._finalStates):
                 finalStates.append(idx)
 
-        return FSMDeterministic(fsmd, 0, finalStates, self._ALPHABETH_, statesId.values())
+        return FSMDeterministic(fsmd, 0, finalStates, self._alphabeth, statesId.values())
 
                 
 class FSMDeterministic(AbstractFSM):
-    def __init__(self, fsm, initState, finalState, alphabeth, states):
+    def __init__(self, fsm, initialState, finalState, alphabeth, states):
         AbstractFSM.__init__(**locals())
     
     def checkRegex(self, inputString):
-        currentState = self._INITIALSTATE_
+        currentState = self._initialState
         for char in inputString:
-            if (currentState, char) not in self._FSM_: 
+            if (currentState, char) not in self._fsm: 
                 return False
-            currentState = self._FSM_[(currentState, char)]
+            currentState = self._fsm[(currentState, char)]
 
-        return currentState in self._FINALSTATES_
+        return currentState in self._finalStates
     
