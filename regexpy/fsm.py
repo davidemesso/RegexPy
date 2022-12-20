@@ -1,21 +1,24 @@
 from regexpy.utils.stack import Stack
 import subprocess
+from abc import ABC
 
-class FSMNotDeterministic:
-    def __init__(self, fsm, initState, finalState, alphabeth, states, lastState = None):
+class AbstractFSM(ABC):
+    def __init__(self, fsm, initState, finalState, alphabeth, states):
         self._FSM_ = fsm
         self._INITIALSTATE_ = initState
         self._FINALSTATES_ = finalState
         self._ALPHABETH_ = alphabeth
         self._STATES_ = states
-        self._LASTSTATE_ = lastState # only used in fromRegex construction
         
     def __str__(self):
-        print(self._FINALSTATES_)
-        print(self._STATES_)
         tostr = "\n{\n"
         tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
         return tostr + "\n}\n"
+
+class FSMNotDeterministic(AbstractFSM):
+    def __init__(self, fsm, initState, finalState, alphabeth, states, lastState = None):
+        AbstractFSM.__init__(self, fsm, initState, finalState, alphabeth, states)
+        self._LASTSTATE_ = lastState # only used in fromRegex construction
 
     def closure(self, state):
         visited = [state]
@@ -65,23 +68,13 @@ class FSMNotDeterministic:
         for (state, idx) in statesId.items():
             if any(item in state for item in self._FINALSTATES_):
                 finalStates.append(idx)
-                
-        return FSMDeterministic(fsmd, 0, finalStates, self._ALPHABETH_, statesId)   
+
+        return FSMDeterministic(fsmd, 0, finalStates, self._ALPHABETH_, statesId.values())
 
                 
-class FSMDeterministic:
-    def __init__(self, fsm, initState, finalState, alphabeth, statesDict):
-        self._FSM_ = fsm
-        self._INITIALSTATE_ = initState
-        self._FINALSTATES_ = finalState
-        self._ALPHABETH_ = alphabeth
-        self._STATESDICT_ = statesDict
-        self._STATES_ = statesDict.values()
-        
-    def __str__(self):
-        tostr = "\n{\n"
-        tostr += "\n".join([f"\t{k}: {v}," for k, v in self._FSM_.items()])
-        return tostr + "\n}\n"
+class FSMDeterministic(AbstractFSM):
+    def __init__(self, fsm, initState, finalState, alphabeth, states):
+        AbstractFSM.__init__(**locals())
     
     def checkRegex(self, inputString):
         currentState = self._INITIALSTATE_
@@ -89,6 +82,6 @@ class FSMDeterministic:
             if (currentState, char) not in self._FSM_: 
                 return False
             currentState = self._FSM_[(currentState, char)]
-            
-        return True if currentState in self._FINALSTATES_ else False
+
+        return currentState in self._FINALSTATES_
     

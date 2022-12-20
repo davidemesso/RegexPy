@@ -13,5 +13,6 @@ except:
     pass
 
 #print(Regex.match("abcdfffff", "((a|b)*c*)(d|f)*"))
+print(Regex("((a|b)*c*)(d|f)*")._REGEXFSM_)
 print(Regex.match(string, regex))
 
