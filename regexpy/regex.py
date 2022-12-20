@@ -13,11 +13,17 @@ class Regex:
         
     @property
     def regex(self):
+        """Property exposing the instantiated regex fsm"""
         return self._regex
     
     @regex.setter
     def regex(self, value):
-    	self._regex = FSMUtils.fromRegex(value).subsetConstruction()
+        """Should not be modified, but if you really want you can use the setter with just a string
+        
+        This setter abstract the string to FSM transformation and permit direct assignment.
+        The correct way is anyway to instantiate a new Regex object
+        """
+        self._regex = FSMUtils.fromRegex(value).subsetConstruction()
     
     def validate(self, string):
         """Returns whether the matching is true or false
