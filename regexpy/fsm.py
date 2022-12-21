@@ -1,8 +1,8 @@
 from regexpy.utils.stack import Stack
 import subprocess
-from abc import ABC
+from abc import ABCMeta
 
-class AbstractFSM(ABC):
+class AbstractFSM(metaclass=ABCMeta):
     """Abstract class representing a generic FSM"""
     
     def __init__(self, fsm, initialState, finalState, alphabeth, states):
