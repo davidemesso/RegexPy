@@ -2,10 +2,10 @@
 
 .PHONY: clean all
 
-all: pparser
+all: ../Parser/pparser
 
-pparser: pparser.o lexer.o
-	g++ -o pparser pparser.o lexer.o
+../Parser/pparser: pparser.o lexer.o
+	g++ -o ../Parser/pparser pparser.o lexer.o
 
 pparser.o: pparser.hpp pparser.cpp tokens.h
 	g++ -c pparser.cpp
